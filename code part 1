@@ -1,0 +1,21 @@
+library(neuralnet)
+
+# Load the data
+data(NFL_RBs)
+
+# Separate the data into training and testing sets
+set.seed(123)
+train_index <- sample(1:nrow(NFL_RBs), size = 0.8, replace = FALSE)
+train_data <- NFL_RBs[train_index, ]
+test_data <- NFL_RBs[-train_index, ]
+
+# Create the neural network
+model <- neuralnet(injured ~ carries + rushing_yards + touchdowns, data = train_data)
+
+# Make predictions on the test data
+predictions <- predict(model, newdata = test_data)
+
+# Evaluate the model
+confusion_matrix <- table(test_data$injured, predictions)
+accuracy <- (confusion_matrix[1,1] + confusion_matrix[2,2]) / nrow(test_data)
+print(accuracy)
