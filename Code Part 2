@@ -1,0 +1,32 @@
+install.packages('neuralnet')
+library(tidymodels)
+library(neuralnet)
+library(readr)
+
+# Load the data
+RBnflData <- read.csv("https://raw.githubusercontent.com/JordanNewton22/490/main/LyonsNewtonProject.csv")
+
+summary(RBnflData)
+RBnflData[2:5]
+
+
+
+"""
+# Separate the data into training and testing sets
+set.seed(123)
+train_index <- sample(1:nrow(NFL_RBs), size = 0.8, replace = FALSE)
+train_data <- RBnflData[train_index, ]
+test_data <- RBnflData[-train_index, ]
+
+# Create the neural network
+model <- neuralnet(Injured ~ Yearly Salary + YDS + TD, data = train_data)
+
+# Make predictions on the test data
+predictions <- predict(model, newdata = test_data)
+
+# Evaluate the model
+confusion_matrix <- table(test_data$injured, predictions)
+accuracy <- (confusion_matrix[1,1] + confusion_matrix[2,2]) / nrow(test_data)
+print(accuracy)
+
+"""
