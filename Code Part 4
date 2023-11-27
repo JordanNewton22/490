@@ -1,7 +1,5 @@
-install.packages('neuralnet')
 install.packages('aod')
 library(tidymodels)
-library(neuralnet)
 library(readr)
 library(aod)
 library(ggplot2)
