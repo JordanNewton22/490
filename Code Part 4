@@ -1,0 +1,47 @@
+install.packages('neuralnet')
+install.packages('aod')
+library(tidymodels)
+library(neuralnet)
+library(readr)
+library(aod)
+library(ggplot2)
+
+# Load the data
+RBnflData <- read.csv("https://raw.githubusercontent.com/JordanNewton22/490/main/LyonsNewtonProject.csv")
+
+summary(RBnflData)
+RB_Data = RBnflData[2:5]
+
+sapply(RB_Data, sd)
+xtabs(~Yearly.Salary + Injured, data = RB_Data)
+RB_Data$Injured <- factor(RB_Data$Injured)
+mylogit <- glm(Injured ~ Yearly.Salary + YDS + TD, data = RB_Data, family = "binomial")
+summary(mylogit)
+
+# Load necessary package
+install.packages('caTools')
+library(caTools)
+
+# Split data into training and testing sets
+set.seed(123)  # for reproducibility
+split <- sample.split(RB_Data$Injured, SplitRatio = 0.7)  # 70% training, 30% testing
+training_set <- subset(RB_Data, split == TRUE)
+testing_set <- subset(RB_Data, split == FALSE)
+
+# Fit logistic regression model on training set
+model <- glm(Injured ~ Yearly.Salary + YDS + TD, data = training_set, family = "binomial")
+
+# Make predictions on the testing set
+predictions <- predict(model, testing_set, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+# Install and load the caret package if not already installed
+install.packages("caret",dependencies=TRUE)
+install.packages('pROC')
+library(caret)
+
+# Confusion matrix
+confusionMatrix(factor(predicted_classes), factor(testing_set$Injured))
