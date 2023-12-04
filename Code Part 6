@@ -1,0 +1,156 @@
+install.packages('aod')
+library(tidymodels)
+library(readr)
+library(aod)
+library(ggplot2)
+
+# Load the data
+RBnflData <- read.csv("https://raw.githubusercontent.com/JordanNewton22/490/main/LyonsNewtonProject.csv")
+
+summary(RBnflData)
+RB_Data = RBnflData[2:5]
+
+# Load necessary package
+install.packages('caTools')
+library(caTools)
+
+# Split data into training and testing sets
+set.seed(123)  # for reproducibility
+split <- sample.split(RB_Data$Injured, SplitRatio = 0.7)  # 70% training, 30% testing
+training_set <- subset(RB_Data, split == TRUE)
+testing_set <- subset(RB_Data, split == FALSE)
+
+# Fit logistic regression model on training set
+model <- glm(Injured ~ Yearly.Salary + YDS + TD, data = training_set, family = "binomial")
+
+# Make predictions on the testing set
+predictions <- predict(model, testing_set, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+# Install and load the caret package if not already installed
+install.packages("caret",dependencies=TRUE)
+install.packages('pROC')
+library(caret)
+
+# Confusion matrix
+confusionMatrix(factor(predicted_classes), factor(testing_set$Injured))
+summary(model)
+
+#Part 2, lets add more data to see if we could be more accurate.
+
+
+
+# Load the data
+RBnflData2 <- read.csv("https://raw.githubusercontent.com/JordanNewton22/490/main/LyonsNewtonProject_Data.csv")
+
+
+summary(RBnflData2)
+RB_Data2 = RBnflData2[2:15]
+
+
+# Split data into training and testing sets
+set.seed(123)  # for reproducibility
+split2 <- sample.split(RB_Data2$Injured, SplitRatio = 0.7)  # 70% training, 30% testing
+training_set2 <- subset(RB_Data2, split == TRUE)
+testing_set2 <- subset(RB_Data2, split == FALSE)
+
+
+
+# Fit logistic regression model on training set
+model2 <- glm(Injured ~ Yearly.Salary + ATT + RUSH.YDS + AVG.RUSH.YDS + LG.RUSH + RUSH.20.CNT + RUSH.TD + REC + TGT + REC.YDS + AVG.REC.YDS + REC.TD + TTL.SNAP.CNT, data = training_set2, family = "binomial")
+
+# Make predictions on the testing set
+predictions2 <- predict(model2, testing_set2, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes2 <- ifelse(predictions2 > 0.5, 1, 0)
+
+
+confusionMatrix(factor(predicted_classes2), factor(testing_set2$Injured))
+
+summary(model2)
+
+
+
+
+#Part 3, selected variables
+
+
+model3 <- glm(Injured ~ Yearly.Salary + ATT + RUSH.YDS + RUSH.TD + REC + TGT + REC.YDS + REC.TD + TTL.SNAP.CNT, data = training_set2, family = "binomial")
+
+# Make predictions on the testing set
+predictions3 <- predict(model3, testing_set2, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes3 <- ifelse(predictions3 > 0.5, 1, 0)
+
+
+confusionMatrix(factor(predicted_classes3), factor(testing_set2$Injured))
+
+summary(model3)
+
+
+#Part 4 only salary
+
+
+model4 <- glm(Injured ~ Yearly.Salary, data = training_set2, family = "binomial")
+
+# Make predictions on the testing set
+predictions4 <- predict(model4, testing_set2, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes4 <- ifelse(predictions4 > 0.5, 1, 0)
+
+
+confusionMatrix(factor(predicted_classes4), factor(testing_set2$Injured))
+
+summary(model4)
+
+
+#part 5, let's bring in another year of data
+
+extendedData <- read.csv("https://raw.githubusercontent.com/JordanNewton22/490/main/LyonsNewtonProject_v2_CSV.csv")
+
+# Split data into training and testing sets
+set.seed(123)  # for reproducibility
+split5 <- sample.split(extendedData$Injured, SplitRatio = 0.7)  # 70% training, 30% testing
+training_set5 <- subset(extendedData, split == TRUE)
+testing_set5 <- subset(extendedData, split == FALSE)
+
+
+
+# Fit logistic regression model on training set
+model5 <- glm(Injured ~ Yearly.Salary + ATT + RUSH.YDS + AVG.RUSH.YDS + LG.RUSH + RUSH.20.CNT + RUSH.TD + REC + TGT + REC.YDS + AVG.REC.YDS + REC.TD + TTL.SNAP.CNT, data = training_set5, family = "binomial")
+
+# Make predictions on the testing set
+predictions5 <- predict(model5, testing_set5, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes5 <- ifelse(predictions5 > 0.5, 1, 0)
+
+confusionMatrix(factor(predicted_classes5), factor(testing_set5$Injured))
+
+summary(model5)
+
+
+#part 6, now let's isolate a group of stats that perform well when tested individually
+
+model6 <- glm(Injured ~ Yearly.Salary + ATT + RUSH.YDS + TGT + REC.YDS , data = training_set5, family = "binomial")
+
+# Make predictions on the testing set
+predictions6 <- predict(model6, testing_set5, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes6 <- ifelse(predictions6 > 0.5, 1, 0)
+
+
+confusionMatrix(factor(predicted_classes6), factor(testing_set5$Injured))
+
+summary(model6)
+
+
+
+
