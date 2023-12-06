@@ -151,6 +151,20 @@ confusionMatrix(factor(predicted_classes6), factor(testing_set5$Injured))
 
 summary(model6)
 
+#Finally lets tests only looking at Salary for the largest data set
+
+model7 <- glm(Injured ~ Yearly.Salary, data = training_set5, family = "binomial")
+
+# Make predictions on the testing set
+predictions7 <- predict(model7, testing_set5, type = "response")
+
+# Convert probabilities to binary predictions (e.g., using 0.5 as a threshold)
+predicted_classes7 <- ifelse(predictions7 > 0.5, 1, 0)
+
+
+confusionMatrix(factor(predicted_classes7), factor(testing_set5$Injured))
+
+summary(model7)
 
 
 
